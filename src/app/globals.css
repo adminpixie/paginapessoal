@@ -1,26 +1,155 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ───────────── Tokens ───────────── */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  /* Superfícies e texto — mudam com o tema */
+  --paper: #f4efe6;
+  --card: #fbf8f2;
+  --ink: #1b1a17;
+  --muted: #6b665c;
+  --line: rgb(27 26 23 / 0.14);
+  --accent: #c23a1e;
+  --accent-ink: #fff8f1;
+  --grain: rgb(27 26 23 / 0.07);
+
+  /* Paleta fixa — usada nas ilustrações e na faixa de contato */
+  --cream: #f4efe6;
+  --night: #1b1a17;
+  --vermilion: #c23a1e;
+  --forest: #1f4d3a;
+  --mustard: #e3a72f;
+  --tide: #27367a;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --paper: #141311;
+    --card: #1d1b18;
+    --ink: #efe9dd;
+    --muted: #a39d90;
+    --line: rgb(239 233 221 / 0.16);
+    --accent: #ff6a47;
+    --accent-ink: #1b1109;
+    --grain: rgb(239 233 221 / 0.045);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+
+  --color-cream: var(--cream);
+  --color-night: var(--night);
+  --color-vermilion: var(--vermilion);
+  --color-forest: var(--forest);
+  --color-mustard: var(--mustard);
+  --color-tide: var(--tide);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces);
+}
+
+@theme {
+  --animate-marquee: marquee 42s linear infinite;
+  --animate-turn: turn 24s linear infinite;
+  --animate-rise: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes turn {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+}
+
+/* ───────────── Base ───────────── */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    color-scheme: light dark;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Grão de papel bem discreto por cima de tudo */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    background-color: var(--grain);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mask-size: 180px 180px;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+}
+
+/* ───────────── Movimento ───────────── */
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+}
+
+/* Entrada ao rolar a página, só com CSS (onde o navegador suporta). */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 18%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
